@@ -7,10 +7,8 @@ from pyod.models.ocsvm import OCSVM
 from pyod.models.abod import ABOD
 from pyod.models.cblof import CBLOF
 from pyod.models.cof import COF
-from pyod.models.combination import aom
 from pyod.models.copod import COPOD
 from pyod.models.ecod import ECOD
-from pyod.models.feature_bagging import FeatureBagging
 from pyod.models.hbos import HBOS
 from pyod.models.knn import KNN
 from pyod.models.lmdd import LMDD
@@ -24,12 +22,6 @@ from pyod.models.pca import PCA
 from pyod.models.rod import ROD
 from pyod.models.sod import SOD
 from pyod.models.sos import SOS
-from pyod.models.vae import VAE
-from pyod.models.auto_encoder_torch import AutoEncoder
-from pyod.models.so_gaal import SO_GAAL
-from pyod.models.mo_gaal import MO_GAAL
-from pyod.models.xgbod import XGBOD
-from pyod.models.deep_svdd import DeepSVDD
 
 
 class PYOD():
@@ -43,11 +35,10 @@ class PYOD():
         self.utils = Utils()
 
         self.model_name = model_name
-        self.model_dict = {'IForest':IForest, 'OCSVM':OCSVM, 'ABOD':ABOD, 'CBLOF':CBLOF, 'COF':COF, 'AOM':aom,
-                           'COPOD':COPOD, 'ECOD':ECOD,  'FeatureBagging':FeatureBagging, 'HBOS':HBOS, 'KNN':KNN,
+        self.model_dict = {'IForest':IForest, 'OCSVM':OCSVM, 'ABOD':ABOD, 'CBLOF':CBLOF, 'COF':COF, 
+                           'COPOD':COPOD, 'ECOD':ECOD, 'HBOS':HBOS, 'KNN':KNN,
                            'LMDD':LMDD, 'LODA':LODA, 'LOF':LOF, 'LOCI':LOCI, 'LSCP':LSCP, 'MAD':MAD,
-                           'MCD':MCD, 'PCA':PCA, 'ROD':ROD, 'SOD':SOD, 'SOS':SOS, 'VAE':VAE, 'DeepSVDD': DeepSVDD,
-                           'AutoEncoder': AutoEncoder, 'SOGAAL': SO_GAAL, 'MOGAAL': MO_GAAL,'XGBOD': XGBOD}
+                           'MCD':MCD, 'PCA':PCA, 'ROD':ROD, 'SOD':SOD, 'SOS':SOS}
 
         self.tune = tune
 
@@ -61,10 +52,8 @@ class PYOD():
                            'ABOD': [3, 5, 7, 9], # n_neighbors, default=5
                            'CBLOF': [4, 6, 8, 10], # n_clusters, default=8
                            'COF': [5, 10, 20, 50], # n_neighbors, default=20
-                           'AOM': None,
                            'COPOD': None,
                            'ECOD': None,
-                           'FeatureBagging': [3, 5, 10, 20], # n_estimators, default=10
                            'HBOS': [3, 5, 10, 20], # n_bins, default=10
                            'KNN': [3, 5, 10, 20], # n_neighbors, default=5
                            'LMDD': ['aad', 'var', 'iqr'], # dis_measure, default='aad'
@@ -78,12 +67,7 @@ class PYOD():
                            'ROD': None,
                            'SOD': [5, 10, 20, 50], # n_neighbors, default=20
                            'SOS': [2.5, 4.5, 7.5, 10.0], # perplexity, default=4.5
-                           'VAE': None,
-                           'AutoEncoder': None,
-                           'SOGAAL': [10, 20, 50, 100], # stop_epochs, default=20
-                           'MOGAAL': [10, 20, 50, 100], # stop_epochs, default=20
                            'XGBOD': None,
-                           'DeepSVDD': [20, 50, 100, 200] # epochs, default=100
                            }
 
         return param_grid_dict[model_name]
@@ -164,12 +148,6 @@ class PYOD():
                     elif self.model_name == 'SOS':
                         model = self.model_dict[self.model_name](perplexity=param).fit(X_train)
 
-                    elif self.model_name == 'SOGAAL':
-                        model = self.model_dict[self.model_name](stop_epochs=param).fit(X_train)
-
-                    elif self.model_name == 'MOGAAL':
-                        model = self.model_dict[self.model_name](stop_epochs=param).fit(X_train)
-
                     elif self.model_name == 'DeepSVDD':
                         model = self.model_dict[self.model_name](epochs=param).fit(X_train)
 
@@ -203,11 +181,6 @@ class PYOD():
         return best_param
 
     def fit(self, X_train, y_train, ratio=None):
-        if self.model_name in ['AutoEncoder', 'VAE']:
-            # only use the normal samples to fit the model
-            idx_n = np.where(y_train==0)[0]
-            X_train = X_train[idx_n]
-            y_train = y_train[idx_n]
 
         # selecting the best hyper-parameters of unsupervised model for fair comparison (if labeled anomalies is available)
         if sum(y_train) > 0 and self.tune:
@@ -270,22 +243,13 @@ class PYOD():
 
             elif self.model_name == 'SOS':
                 self.model = self.model_dict[self.model_name](perplexity=best_param).fit(X_train)
-
-            elif self.model_name == 'SOGAAL':
-                self.model = self.model_dict[self.model_name](stop_epochs=best_param).fit(X_train)
-
-            elif self.model_name == 'MOGAAL':
-                self.model = self.model_dict[self.model_name](stop_epochs=best_param).fit(X_train)
-
-            elif self.model_name == 'DeepSVDD':
-                self.model = self.model_dict[self.model_name](epochs=best_param).fit(X_train)
-
             else:
                 raise NotImplementedError
 
         else:
             # unsupervised method would ignore the y labels
-            self.model = self.model_dict[self.model_name]().fit(X_train, y_train)
+            # print(f"now to train:{self.model_name}")
+            self.model = self.model_dict[self.model_name]().fit(X_train)#, y_train)
 
         return self
 

@@ -1,0 +1,24 @@
+[project]
+authors = ["Lyscanthrope <88078403+Lyscanthrope@users.noreply.github.com>"]
+channels = ["conda-forge"]
+name = "NovelBench"
+platforms = ["win-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+python="3.12.*"
+
+[pypi-dependencies]
+pyod="*"
+pandas="*"
+scikit-learn="*"
+tqdm="*"
+numpy="*"
+scipy="*"
+matplotlib="*"
+ipykernel="*"
+requests="*"
+wget="*"
+ecode={path = "../ecod_evt", editable = true }

@@ -4,3 +4,7 @@ __pycache__/
 __pycache__
 .idea/
 .vscode/
+
+# pixi environments
+.pixi
+*.egg-info

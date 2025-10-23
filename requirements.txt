@@ -1,5 +1,4 @@
 pyod==1.0.0
-rtdl
 scikit-learn
 torch
 keras

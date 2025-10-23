@@ -3,3 +3,5 @@ datasets/* linguist-documentation
 notebooks/*.ipynb linguist-documentation
 *.ipynb linguist-documentation
 examples/*.ipynb linguist-documentation=false
+# SCM syntax highlighting & preventing 3-way merges
+pixi.lock merge=binary linguist-language=YAML linguist-generated=true
