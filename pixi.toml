@@ -21,4 +21,5 @@ matplotlib="*"
 ipykernel="*"
 requests="*"
 wget="*"
+seaborn="*"
 ecode={path = "../ecod_evt", editable = true }
