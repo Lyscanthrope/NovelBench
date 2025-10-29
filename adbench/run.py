@@ -10,7 +10,7 @@ import os
 
 from adbench.datasets.data_generator import DataGenerator
 from adbench.myutils import Utils
-from ecode import ECODe
+from ecode import ECODe,default_ecode_pipeline
 class RunPipeline():
     def __init__(self, suffix:str=None, mode:str='rla', parallel:str=None):
         '''
@@ -46,9 +46,9 @@ class RunPipeline():
         # unsupervised algorithms
         if self.parallel == 'unsupervise':
             from adbench.baseline.PyOD import PYOD
-            self.model_dict["ECODe"] = ECODe
+            self.model_dict["ECODe"] = default_ecode_pipeline
             # from pyod
-            for _ in ['IForest', 'OCSVM', 'COF', 'COPOD', 'ECOD', 'HBOS', 'KNN', 'LODA', 'LOF', 'SOD','MCD','PCA']:#'LSCP',
+            for _ in ['KNN','IForest', 'OCSVM', 'COF', 'COPOD', 'ECOD', 'HBOS',  'LODA', 'LOF', 'SOD','PCA','CBLOF']:#'LSCP','MCD',
                 self.model_dict[_] = PYOD
 
         # semi-supervised algorithms

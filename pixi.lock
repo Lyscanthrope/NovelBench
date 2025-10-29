@@ -185,11 +185,12 @@ packages:
 - pypi: ../ecod_evt
   name: ecode
   version: 0.1.0
-  sha256: c2f6ec5d9ad5d81c6cbda116c6291eb037703e3321b68abaa7b9350e09137da3
+  sha256: d9e96d6da94d52fb2192dcff45a1f475b4493f6402a804f2f35c9877529fdd1a
   requires_dist:
   - numpy
   - scipy
   - statsmodels
+  - scikit-learn
   editable: true
 - pypi: https://files.pythonhosted.org/packages/c1/ea/53f2148663b321f21b5a606bd5f191517cf40b7072c0497d3c92c4a13b1e/executing-2.2.1-py2.py3-none-any.whl
   name: executing
